@@ -15,16 +15,16 @@ WORKDIR /root/
 
 # ========= Installing Dependencies ==============
 RUN yum update -y && yum install -y  epel-release && yum groupinstall -y "development tools" \
-	&& yum install -y gcc zlib zlib-devel lzo lzo-devel libpcap libpcap-devel gnutls gnutls-devel python-devel c-ares c-ares-devel \
-	                  openssl-devel glib glibc-devel glib2-devel wget rrdtool-perl psmisc mod_perl "perl(Pod::Html)" "perl(GD::Text)" \
-	 				  "perl(Encode::HanExtra)" "perl(GD::Graph)" httpd httpd-tools gd perl-GD rrdtool 
+    && yum install -y gcc zlib zlib-devel lzo lzo-devel libpcap libpcap-devel gnutls gnutls-devel python-devel c-ares c-ares-devel \
+    openssl-devel glib glibc-devel glib2-devel wget rrdtool-perl psmisc mod_perl "perl(Pod::Html)" "perl(GD::Text)" \
+    "perl(Encode::HanExtra)" "perl(GD::Graph)" httpd httpd-tools gd perl-GD rrdtool 
 
 
 # ========= Download Silk Dependencies ==============
 RUN wget https://tools.netsa.cert.org/releases/libfixbuf-$LIBFIXBUF_VERSION.tar.gz \
-		 https://tools.netsa.cert.org/releases/netsa-python-$NETSA_PYTHON_VERSION.tar.gz \
-		 https://tools.netsa.cert.org/releases/ipa-$IPA_VERSION.tar.gz \
-		 https://tools.netsa.cert.org/releases/silk-$SILK_VERSION.tar.gz
+         https://tools.netsa.cert.org/releases/netsa-python-$NETSA_PYTHON_VERSION.tar.gz \
+	 https://tools.netsa.cert.org/releases/ipa-$IPA_VERSION.tar.gz \
+	 https://tools.netsa.cert.org/releases/silk-$SILK_VERSION.tar.gz
 
 
 # # ============ Installing Silk Dependencies ===============
@@ -44,7 +44,7 @@ RUN echo /usr/local/lib >>/etc/ld.so.conf.d/local.conf && ldconfig -v
 
 RUN tar zxvf silk-$SILK_VERSION.tar.gz && cd silk-$SILK_VERSION \
 	&& ./configure --enable-data-rootdir=/data/flows --prefix=/opt/silk --enable-output-compression --with-libipa=/usr/local/lib/pkgconfig \
-				   --with-libfixbuf=/usr/local/lib/pkgconfig --enable-localtime \
+                       --with-libfixbuf=/usr/local/lib/pkgconfig --enable-localtime \
 	&& make && make install \
 	&& cd .. 
 
@@ -56,10 +56,9 @@ RUN rm -fr * && yum clean all
 # ============ Installing FlowViewer files =================
 RUN wget -P /var/www/cgi-bin/ https://netix.dl.sourceforge.net/project/flowviewer/FlowViewer_$FLOWVIEWER_VERSION.tar \
     && tar -C /var/www/cgi-bin/ -xvf /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION.tar && rm -fr /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION.tar \
-	&& mkdir -p /var/www/html/FlowViewer /var/www/html/FlowGrapher /var/www/html/FlowMonitor /var/www/cgi-bin/FlowMonitor_Files/ \
-	            /var/www/cgi-bin/FlowMonitor_Files/FlowMonitor_Filters /var/www/cgi-bin/FlowMonitor_RRDtool/ \
-	&& cp /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/FV_button.png /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/FM_button.png /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/FG_button.png /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/FlowViewer.css /var/www/html/FlowViewer/ \
-	&& chmod +x -R /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION && chown -R apache:apache /var/www/ 
+    && mkdir -p /var/www/html/FlowViewer /var/www/html/FlowGrapher /var/www/html/FlowMonitor /var/www/cgi-bin/FlowMonitor_Files/ /var/www/cgi-bin/FlowMonitor_Files/FlowMonitor_Filters /var/www/cgi-bin/FlowMonitor_RRDtool/ \
+    && cp /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/FV_button.png /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/FM_button.png /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/FG_button.png /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/FlowViewer.css /var/www/html/FlowViewer/ \
+    && chmod +x -R /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION && chown -R apache:apache /var/www/ 
 
 COPY ./*conf /opt/silk/etc/
 COPY ./FlowViewer_Configuration.pm /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/
