@@ -208,10 +208,10 @@ $analyze_extension  = 20;        # Number of pixels to extend FlowGrapher_Analyz
  
 $actives_webpage    = "index.html";
 $log_directory      = "/data/log";
-$log_collector_short= "Y";
-$log_collector_med  = "Y";
+$log_collector_short= "N";
+$log_collector_med  = "N";
 $log_collector_long = "N";
-$log_grapher_short  = "Y";
+$log_grapher_short  = "N";
 $log_grapher_long   = "N";
 $collection_offset  = 1800;
 $collection_period  = 300;
