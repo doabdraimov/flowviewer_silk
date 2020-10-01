@@ -44,7 +44,7 @@ RUN echo /usr/local/lib >>/etc/ld.so.conf.d/local.conf && ldconfig -v
 
 RUN tar zxvf silk-$SILK_VERSION.tar.gz && cd silk-$SILK_VERSION \
     && ./configure --enable-data-rootdir=/data/flows --prefix=/opt/silk --enable-output-compression --with-libipa=/usr/local/lib/pkgconfig \
-                   --with-libfixbuf=/usr/local/lib/pkgconfig --enable-localtime
+                   --with-libfixbuf=/usr/local/lib/pkgconfig --enable-localtime \
     && make && make install \
     && cd .. 
 
