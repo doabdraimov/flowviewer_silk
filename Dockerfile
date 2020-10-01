@@ -25,8 +25,8 @@ RUN yum update -y && yum install -y  epel-release && yum groupinstall -y "develo
 # ========= Download Silk Dependencies ==============
 RUN wget https://tools.netsa.cert.org/releases/libfixbuf-$LIBFIXBUF_VERSION.tar.gz \
          https://tools.netsa.cert.org/releases/netsa-python-$NETSA_PYTHON_VERSION.tar.gz \
-	       https://tools.netsa.cert.org/releases/ipa-$IPA_VERSION.tar.gz \
-	       https://tools.netsa.cert.org/releases/silk-$SILK_VERSION.tar.gz
+	 https://tools.netsa.cert.org/releases/ipa-$IPA_VERSION.tar.gz \
+	 https://tools.netsa.cert.org/releases/silk-$SILK_VERSION.tar.gz
 
 
 # # ============ Installing Silk Dependencies ===============
