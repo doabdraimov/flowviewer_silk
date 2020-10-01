@@ -33,8 +33,6 @@ if [ $status -ne 0 ]; then
   exit $status
 fi
 
-i=1
-
 while /bin/true; do
   $(ps aux |grep -q apache2     | grep -v grep)
   PROCESS_1_STATUS=$?
@@ -48,13 +46,5 @@ while /bin/true; do
     echo "One of the processes has already exited. ($status)"
     exit -1
   fi
-  if [[ $i == "2880" ]]; then
-    echo "Clear silk & flowviewer logs"
-    rm -fr /data/log/*.log 
-    echo "" > /var/www/cgi-bin/FlowViewer_4.6/logs/FlowMonitor_Collector.log
-    echo "" > /var/www/cgi-bin/FlowViewer_4.6/logs/FlowMonitor_Grapher.log
-    i=1
-  fi
-  let "i += 1"
   sleep 60
 done
