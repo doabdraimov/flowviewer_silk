@@ -1,4 +1,4 @@
-FROM centos:8
+FROM centos:7
 MAINTAINER Daniiar Abdraimov (doabdraimov@gmail.com)
 
 ENV TZ=Asia/Bishkek
@@ -14,17 +14,19 @@ WORKDIR /root/
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # ========= Installing Dependencies ==============
-RUN dnf update -y && dnf install -y  epel-release && dnf groupinstall -y "development tools" \
-    && dnf install -y gcc zlib zlib-devel lzo lzo-devel libpcap gnutls gnutls-devel python2-devel python3-devel c-ares c-ares-devel \
-    openssl-devel glibc-devel glib2-devel wget rrdtool-perl psmisc mod_perl "perl(Pod::Html)" "perl(GD::Text)" \
-    "perl(Encode::HanExtra)" "perl(GD::Graph)" httpd httpd-tools gd perl-GD rrdtool libmaxminddb libmaxminddb-devel 
+RUN yum update -y && yum install -y  epel-release && yum groupinstall -y "development tools" \
+    && yum install -y gcc zlib zlib-devel lzo lzo-devel libpcap gnutls gnutls-devel \
+                      python2-devel python3-devel c-ares c-ares-devel openssl-devel \
+                      glibc-devel glib2-devel wget rrdtool-perl psmisc mod_perl \
+                      "perl(Pod::Html)" "perl(GD::Text)" "perl(Encode::HanExtra)" \
+                      "perl(GD::Graph)" httpd httpd-tools gd perl-GD rrdtool libmaxminddb libmaxminddb-devel 
 
 
 # ========= Download Silk Dependencies ==============
 RUN wget https://tools.netsa.cert.org/releases/libfixbuf-$LIBFIXBUF_VERSION.tar.gz \
          https://tools.netsa.cert.org/releases/netsa-python-$NETSA_PYTHON_VERSION.tar.gz \
-	 https://tools.netsa.cert.org/releases/ipa-$IPA_VERSION.tar.gz \
-	 https://tools.netsa.cert.org/releases/silk-$SILK_VERSION.tar.gz
+	       https://tools.netsa.cert.org/releases/ipa-$IPA_VERSION.tar.gz \
+	       https://tools.netsa.cert.org/releases/silk-$SILK_VERSION.tar.gz
 
 
 # # ============ Installing Silk Dependencies ===============
@@ -63,14 +65,14 @@ RUN mkdir -p /opt/silk/etc/ /data/flows/ \
     && /opt/silk/bin/rwgeoip2ccmap --input-path=GeoLite2-Country-CSV_20200929/ --output-path=country_codes.pmap \
     && cp country_codes.pmap /opt/silk/share/silk/country_codes.pmap
 
-RUN rm -fr * && dnf clean all
+RUN rm -fr * && yum clean all
 
 # ============ Installing FlowViewer files =================
 RUN wget -P /var/www/cgi-bin/ https://netix.dl.sourceforge.net/project/flowviewer/FlowViewer_$FLOWVIEWER_VERSION.tar \
     && tar -C /var/www/cgi-bin/ -xvf /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION.tar && rm -fr /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION.tar \
     && mkdir -p /var/www/html/FlowViewer /var/www/html/FlowGrapher /var/www/html/FlowMonitor /var/www/cgi-bin/FlowMonitor_Files/ /var/www/cgi-bin/FlowMonitor_Files/FlowMonitor_Filters /var/www/cgi-bin/FlowMonitor_RRDtool/ \
-    && cp /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/FV_button.png /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/FM_button.png /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/FG_button.png /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/FlowViewer.css /var/www/html/FlowViewer/ \
-    && chmod +x -R /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION && chown -R apache:apache /var/www/ 
+    && cp /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/FV_button.png /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/FM_button.png /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/FG_button.png /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/FlowViewer.css /var/www/html/FlowViewer/ 
+    
 
 COPY ./*conf /opt/silk/etc/
 COPY ./FlowViewer_Configuration.pm /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION/
@@ -83,7 +85,7 @@ COPY scripts/start_httpd.sh      start_httpd.sh
 COPY scripts/start_rwflowpack.sh start_rwflowpack.sh
 COPY scripts/start_flowviewer.sh start_flowviewer.sh
 
-RUN chmod +x *sh 
+RUN chmod +x *sh && chmod 775 -R /var/www/cgi-bin/FlowViewer_$FLOWVIEWER_VERSION && chown -R apache:apache /var/www/ 
 
 EXPOSE 80
 EXPOSE 22055/udp
