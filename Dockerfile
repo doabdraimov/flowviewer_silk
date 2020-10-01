@@ -1,4 +1,4 @@
-FROM centos:7
+FROM centos:7.8.2003
 MAINTAINER Daniiar Abdraimov (doabdraimov@gmail.com)
 
 ENV TZ=Asia/Bishkek
@@ -11,7 +11,7 @@ ENV FLOWVIEWER_VERSION=4.6
 WORKDIR /root/
 
 # ========= Set Timezone ==============
- RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # ========= Installing Dependencies ==============
 RUN yum update -y && yum install -y  epel-release && yum groupinstall -y "development tools" \
@@ -29,27 +29,27 @@ RUN wget https://tools.netsa.cert.org/releases/libfixbuf-$LIBFIXBUF_VERSION.tar.
 
 # # ============ Installing Silk Dependencies ===============
 RUN tar zxvf libfixbuf-$LIBFIXBUF_VERSION.tar.gz && cd libfixbuf-$LIBFIXBUF_VERSION  \
-	&& ./configure && make && make install \
-	&& cd ..
+    && ./configure && make && make install \
+    && cd ..
 
-RUN	tar zxvf netsa-python-$NETSA_PYTHON_VERSION.tar.gz && cd netsa-python-$NETSA_PYTHON_VERSION \
-	&& python2 setup.py build && python2 setup.py install \
-	&& cd ..
+RUN tar zxvf netsa-python-$NETSA_PYTHON_VERSION.tar.gz && cd netsa-python-$NETSA_PYTHON_VERSION \
+    && python2 setup.py build && python2 setup.py install \
+    && cd ..
 
 RUN tar zxvf ipa-$IPA_VERSION.tar.gz && cd ipa-$IPA_VERSION \
-	&& ./configure && make && make install \
-	&& cd ..
+    && ./configure && make && make install \
+    && cd ..
 
 RUN echo /usr/local/lib >>/etc/ld.so.conf.d/local.conf && ldconfig -v
 
 RUN tar zxvf silk-$SILK_VERSION.tar.gz && cd silk-$SILK_VERSION \
-	&& ./configure --enable-data-rootdir=/data/flows --prefix=/opt/silk --enable-output-compression --with-libipa=/usr/local/lib/pkgconfig \
-                       --with-libfixbuf=/usr/local/lib/pkgconfig --enable-localtime \
-	&& make && make install \
-	&& cd .. 
+    && ./configure --enable-data-rootdir=/data/flows --prefix=/opt/silk --enable-output-compression --with-libipa=/usr/local/lib/pkgconfig \
+                   --with-libfixbuf=/usr/local/lib/pkgconfig --enable-localtime
+    && make && make install \
+    && cd .. 
 
 RUN mkdir -p /opt/silk/etc/ /data/flows/ \
-	&& /opt/silk/bin/rwpmapbuild --input /opt/silk/share/silk/addrtype-templ.txt --output address_types.pmap
+    && /opt/silk/bin/rwpmapbuild --input /opt/silk/share/silk/addrtype-templ.txt --output address_types.pmap
 
 RUN rm -fr * && yum clean all
 
