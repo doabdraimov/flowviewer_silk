@@ -1,4 +1,4 @@
-FROM centos:7.8.2003
+FROM centos:7
 MAINTAINER Daniiar Abdraimov (doabdraimov@gmail.com)
 
 ENV TZ=Asia/Bishkek
