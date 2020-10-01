@@ -207,7 +207,7 @@ $analyze_extension  = 20;        # Number of pixels to extend FlowGrapher_Analyz
 # Monitor parameters
  
 $actives_webpage    = "index.html";
-$log_directory      = "/var/www/cgi-bin/FlowViewer_4.6/logs";
+$log_directory      = "/data/log";
 $log_collector_short= "Y";
 $log_collector_med  = "Y";
 $log_collector_long = "N";
