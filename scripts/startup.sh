@@ -5,46 +5,53 @@
 
 # Start httpd2
 echo `whoami`
+
 # sudo /usr/sbin/httpd -D FOREGROUND &
 ./start_httpd.sh -D
 status=$?
-echo "Status: $?"
+echo "httpd status: $?"
 # if [ $status -ne 0 ]; then
-#   echo "Failed to start apache2: $status"
+#   echo "Failed to start httpd: $status"
 #   exit $status
 # fi
-
-echo `ps ax | grep apache`
 
 # Start rwflowpack
 ./start_rwflowpack.sh start -D
 status=$?
-if [ $status -ne 0 ]; then
-  echo "Failed to start rwflowpack: $status"
-  exit $status
-fi
-
+echo "rwflowpack status: $?"
+#if [ $status -ne 0 ]; then
+#  echo "Failed to start rwflowpack: $status"
+#  exit $status
+#fi
 
 # Start FlowViewer programs
 ./start_flowviewer.sh -D
 status=$?
-if [ $status -ne 0 ]; then
-  echo "Failed to start FlowViewer: $status"
-  exit $status
-fi
+echo "FlowViewer status: $?"
+#if [ $status -ne 0 ]; then
+#  echo "Failed to start FlowViewer: $status"
+#  exit $status
+#fi
 
 while /bin/true; do
-  $(ps aux |grep -q apache2     | grep -v grep)
-  PROCESS_1_STATUS=$?
-  $(ps aux |grep -q rwflowpack  | grep -v grep)
-  PROCESS_2_STATUS=$?
-  #status = $PROCESS_1_STATUS+$PROCESS_2_STATUS+$PROCESS_2_STATUS
-  echo "Status: '$PROCESS_1_STATUS' '$PROCESS_2_STATUS' "
-  # If the greps above find anything, they will exit with 0 status
-  # If they are not both 0, then something is wrong
-  if [ $status -ne 0 ]; then
-    echo "One of the processes has already exited. ($status)"
-    exit -1
-  fi
-  sleep 60
+ $(ps ax | grep -v grep | grep httpd &> /dev/null)
+ PROCESS_1_STATUS=$?
+
+ $(ps ax | grep -v grep | grep rwflowpack &> /dev/null)
+ PROCESS_2_STATUS=$?
+
+ $(ps ax | grep -v grep | grep FlowMonitor &> /dev/null)
+ PROCESS_3_STATUS=$?
+
+ # If the greps above find anything, they will exit with 0 status
+ # If they are not 0, then something is wrong
+
+ if [[ "$PROCESS_1_STATUS" > 0 || "$PROCESS_2_STATUS" > 0 || "$PROCESS_3_STATUS" > 0 ]]; then
+  echo "Status: httpd = '$PROCESS_1_STATUS' rwflowpack = '$PROCESS_2_STATUS' FlowViewer = '$PROCESS_3_STATUS'"
+  exit -1 
+ fi
+ 
+ echo "Status: '$PROCESS_1_STATUS' '$PROCESS_2_STATUS' '$PROCESS_3_STATUS'"
+ 
+ sleep 60
 done
