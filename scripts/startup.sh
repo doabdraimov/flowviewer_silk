@@ -15,6 +15,16 @@ echo "httpd status: $?"
 #   exit $status
 # fi
 
+# Почемуто не удаляются файлы после перезапуска контейнера, удаляем вручную.(пока еще не разобрался почему это происходит)
+sleep 5
+$(ps ax | grep -v grep | grep httpd &> /dev/null)
+HTTPD_STATUS=$?
+if [[ "$HTTPD_STATUS" > 0 ]]; then
+ echo "clearing /run/httpd/ directoryi and restarting httpd"
+ rm -rf /run/httpd/*
+ ./start_httpd.sh -D 
+fi
+
 # Start rwflowpack
 ./start_rwflowpack.sh start -D
 status=$?
