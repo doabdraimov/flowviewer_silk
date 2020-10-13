@@ -6,8 +6,12 @@
 # Start httpd2
 echo `whoami`
 
-# sudo /usr/sbin/httpd -D FOREGROUND &
+#------
+# Почемуто не удаляются файлы после перезапуска контейнера, удаляем вручную.(пока еще не разобрался почему это происходит)
 rm -rf /run/httpd/*
+#------
+
+# sudo /usr/sbin/httpd -D FOREGROUND &
 ./start_httpd.sh -D
 status=$?
 echo "httpd status: $?"
